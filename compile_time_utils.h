@@ -1,16 +1,29 @@
 #pragma once
 
-namespace compile_time_utils {
+#include <cstdint>
 
-constexpr bool str_eq(char const* const s, char const* const t) {
-    return (*s == *t)
-        && (*s == 0 || str_eq(s + 1, t + 1));
+namespace compile_time_utils
+{
+
+constexpr bool str_eq(char const* const s, char const* const t)
+{
+  return (*s == *t)
+      && (*s == 0 || str_eq(s + 1, t + 1));
 }
 
-// ps must be nullptr-terminated
-constexpr bool str_in(char const* s, char const* const* ps) {
-    return (*ps != nullptr)
-        && (str_eq(s, *ps) || str_in(s, ps + 1));
+constexpr bool str_in(
+    char const* const s,
+    char const* const* const ps,
+    char const* const* const ps_end)
+{
+  return (ps != ps_end)
+      && (str_eq(s, *ps) || str_in(s, ps + 1, ps_end)); 
+}
+
+template <std::size_t N>
+constexpr bool str_in(char const* const s, char const* const (&ps)[N])
+{
+  return str_in(s, &(ps[0]), &(ps[N]));
 }
 
 } // namespace compile_time
@@ -20,8 +33,7 @@ namespace {
 constexpr char const* const compile_time_utils_test_data[] {
     "one",
     "two",
-    "three",
-    nullptr
+    "three"
 };
 
 static_assert(
@@ -49,3 +61,4 @@ static_assert(
     "Must be recognized as a non-member");
 
 } // namespace 
+

@@ -6,7 +6,6 @@ constexpr char const* const good_names[] {
     "Freya",
     "Baldr",
     "Heimdall",
-    nullptr
 };
 
 template <typename T, T X>
